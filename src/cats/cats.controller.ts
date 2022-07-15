@@ -1,24 +1,40 @@
-import {Body, Controller, Get, Param, Post, Query, Redirect, Req} from '@nestjs/common';
-import {Request} from 'express';
+import {Body, Controller, Get, Param, Post, Query,Request, Redirect, Req, UseGuards} from '@nestjs/common';
 import {CatRequestDdo} from "./dto";
-import {CatSchema} from "./cats.schema";
+import {LoginRequestDto} from "../auth/login.request.dto";
 import {CatsService} from "./cats.service";
+import {AuthService} from "../auth/auth.service";
+import {JwtAuthGuard} from "../auth/jwt/jwt.guard";
+
 
 @Controller('cats')
 export class CatsController {
-    constructor(private readonly catService : CatsService) {
-    }
+    constructor(
+        private readonly catService : CatsService,
+        private readonly authService: AuthService,
+    ){}
+    @UseGuards(JwtAuthGuard)
     @Get()
-    getCurrentCat(@Param() param, @Query() query){
-        console.log(param);
-        console.log(query);
-        return 'Current cat'
+    getCurrentCat(@Req() req){
+        console.log(req?.user)
+        return req?.user;
     }
-
-    @Post("/sign")
+    @Get('info')
+    getInfo(){
+        return {
+            id:'admin',
+            password:'admin1234'
+        };
+    }
+    @Post()
     async signUp(@Body() body : CatRequestDdo){
         console.log(body);
         return await this.catService.signUp(body);
     }
-
+    @Post('login')
+    async signIn(@Body() body : LoginRequestDto){
+        console.log("요청들어옴");
+        console.log(body);
+        return await this.authService.jwtLogIn(body);
+    }
 }
+

@@ -5,7 +5,7 @@ import {IsEmail, IsNotEmpty, IsString} from "class-validator";
 export type CatDocument = Cat & Document;
 
 const options:SchemaOptions = {
-    timestamps:true
+    timestamps:true,
 }
 @Schema(options)
 export class Cat extends Document{

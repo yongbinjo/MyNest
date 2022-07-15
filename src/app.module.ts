@@ -6,6 +6,7 @@ import { CatsModule } from './cats/cats.module';
 import {MongooseModule} from "@nestjs/mongoose";
 import * as mongoose from 'mongoose'
 import {ConfigModule, ConfigService} from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
         uri: configService.get<string>('MONGODB_URI'),
       }),
       inject: [ConfigService],
-    })
+    }),
+    AuthModule
   ],
   controllers: [AppController, CatsController],
   providers: [AppService],
